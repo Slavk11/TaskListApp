@@ -6,10 +6,12 @@
 //
 
 import UIKit
-import CoreData
+
 
 final class TaskListViewController: UITableViewController {
-    private let viewContext = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    
+    private let storageManager = StorageManager.shared
+    
     
     private let cellID = "cell"
     private var taskList: [Task] = []
@@ -44,7 +46,7 @@ final class TaskListViewController: UITableViewController {
         let fetchRequest = Task.fetchRequest()
         
         do {
-            taskList = try viewContext.fetch(fetchRequest)
+            taskList = try storageManager.persistentContainer.viewContext.fetch(fetchRequest)
         } catch {
             print(error.localizedDescription)
         }
@@ -66,22 +68,23 @@ final class TaskListViewController: UITableViewController {
     }
     
     private func save(_ taskName: String) {
-        let task = Task(context: viewContext)
+        let task = Task(context: storageManager.persistentContainer.viewContext)
         task.title = taskName
         taskList.append(task)
         
         let indexPath = IndexPath(row: taskList.count - 1, section: 0)
         tableView.insertRows(at: [indexPath], with: .automatic)
         
-        if viewContext.hasChanges {
+        if storageManager.persistentContainer.viewContext.hasChanges {
             do {
-                try viewContext.save()
+                try storageManager.persistentContainer.viewContext.save()
             } catch {
                 print(error.localizedDescription)
             }
         }
         dismiss(animated: true)
     }
+    
 }
 
 // MARK: - SetupUI
