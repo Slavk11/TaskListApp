@@ -15,7 +15,7 @@ final class TaskListViewController: UITableViewController {
     
     private let cellID = "cell"
     private var taskList: [Task] = []
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellID)
@@ -37,7 +37,7 @@ final class TaskListViewController: UITableViewController {
         cell.contentConfiguration = content
         return cell
     }
-
+    
     @objc private func addNewTask() {
         showAlert(withTitle: "New Task", andMessage: "What do you want to do?")
     }
@@ -68,20 +68,14 @@ final class TaskListViewController: UITableViewController {
     }
     
     private func save(_ taskName: String) {
-        let task = Task(context: storageManager.persistentContainer.viewContext)
+        let task = Task(context: storageManager.context)
         task.title = taskName
         taskList.append(task)
         
         let indexPath = IndexPath(row: taskList.count - 1, section: 0)
         tableView.insertRows(at: [indexPath], with: .automatic)
         
-        if storageManager.persistentContainer.viewContext.hasChanges {
-            do {
-                try storageManager.persistentContainer.viewContext.save()
-            } catch {
-                print(error.localizedDescription)
-            }
-        }
+       
         dismiss(animated: true)
     }
     
