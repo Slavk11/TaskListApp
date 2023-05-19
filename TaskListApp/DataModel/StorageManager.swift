@@ -11,6 +11,9 @@ final class StorageManager {
     static let shared = StorageManager()
     private init() {}
     
+    lazy var context: NSManagedObjectContext = {
+        persistentContainer.viewContext
+    }()
     // MARK: - Core Data stack
     lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "TaskListApp")
@@ -24,7 +27,8 @@ final class StorageManager {
     
     // MARK: - Core Data Saving support
     func saveContext() {
-        let context = persistentContainer.viewContext
+       
+       
         if context.hasChanges {
             do {
                 try context.save()
@@ -34,6 +38,23 @@ final class StorageManager {
             }
         }
     }
+    
+    func fetchTasks() -> [Task] {
+        let fetchRequest = Task.fetchRequest()
+        do {
+            return try persistentContainer.viewContext.fetch(fetchRequest)
+        } catch {
+            print(error.localizedDescription)
+            return []
+        }
+    }
+    
+    func edit(task: Task, newTitle: String) {
+        task.title = newTitle
+        saveContext()
+        
+    }
+    
     
     /*func applicationWillTerminate(_ application: UIApplication) {
         saveContext()
