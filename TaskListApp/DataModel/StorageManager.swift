@@ -42,7 +42,7 @@ final class StorageManager {
     func fetchTasks() -> [Task] {
         let fetchRequest = Task.fetchRequest()
         do {
-            return try persistentContainer.viewContext.fetch(fetchRequest)
+            return try context.fetch(fetchRequest)
         } catch {
             print(error.localizedDescription)
             return []
