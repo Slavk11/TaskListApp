@@ -44,12 +44,7 @@ final class TaskListViewController: UITableViewController {
     
     private func fetchData() {
         let fetchRequest = Task.fetchRequest()
-        
-        do {
-            taskList = try storageManager.persistentContainer.viewContext.fetch(fetchRequest)
-        } catch {
-            print(error.localizedDescription)
-        }
+        taskList = storageManager.fetchTasks()
     }
     
     private func showAlert(withTitle title: String, andMessage message: String) {
@@ -71,11 +66,9 @@ final class TaskListViewController: UITableViewController {
         let task = Task(context: storageManager.context)
         task.title = taskName
         taskList.append(task)
-        
         let indexPath = IndexPath(row: taskList.count - 1, section: 0)
         tableView.insertRows(at: [indexPath], with: .automatic)
-        
-       
+        storageManager.saveContext()
         dismiss(animated: true)
     }
     
