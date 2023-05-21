@@ -27,8 +27,6 @@ final class StorageManager {
     
     // MARK: - Core Data Saving support
     func saveContext() {
-       
-       
         if context.hasChanges {
             do {
                 try context.save()
@@ -49,25 +47,18 @@ final class StorageManager {
         }
     }
     
-    func edit(task: Task, newTitle: String) {
+    func edit(_ task: Task, newTitle: String) {
         task.title = newTitle
         saveContext()
-        
     }
     
-    
-    /*func applicationWillTerminate(_ application: UIApplication) {
+    func delete(_ object: Task) {
+        context.delete(object)
         saveContext()
     }
-     */
-    /*func sceneDidEnterBackground(_ scene: UIScene) {
-        (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
-    }
-   */
-    
 }
-   
-    
+
+
     
 
     
