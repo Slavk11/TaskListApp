@@ -7,12 +7,9 @@
 
 import UIKit
 
-
 final class TaskListViewController: UITableViewController {
     
     private let storageManager = StorageManager.shared
-    
-    
     private let cellID = "cell"
     private var taskList: [Task] = []
     
@@ -43,7 +40,6 @@ final class TaskListViewController: UITableViewController {
     }
     
     private func fetchData() {
-        let fetchRequest = Task.fetchRequest()
         taskList = storageManager.fetchTasks()
     }
     
@@ -72,6 +68,53 @@ final class TaskListViewController: UITableViewController {
         dismiss(animated: true)
     }
     
+}
+
+// MARK: - UITableViewDelegate
+extension TaskListViewController {
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            let task = taskList[indexPath.row]
+            taskList.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+            storageManager.delete(task)
+        }
+    }
+}
+
+extension TaskListViewController {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        let selectedTask = taskList[indexPath.row]
+        let sheet = UIAlertController(
+            title: "Edit",
+            message: nil,
+            preferredStyle: .actionSheet
+        )
+        sheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        sheet.addAction(UIAlertAction(title: "Edit", style: .default, handler: { _ in
+            
+            let alert = UIAlertController(
+                title: "Edit Task",
+                message: "You can edit your text here",
+                preferredStyle: .alert
+            )
+            
+            alert.addTextField(configurationHandler: nil)
+            alert.textFields?.first?.text = selectedTask.title
+            alert.addAction(UIAlertAction(title: "Save", style: .cancel, handler: { [weak self] _ in
+                guard let field = alert.textFields?.first, let editedText = field.text, !editedText.isEmpty else {
+                    return
+                }
+                self?.storageManager.edit(selectedTask, newTitle: editedText)
+                DispatchQueue.main.async {
+                    self?.tableView.reloadData()
+                }
+            }))
+            self.present(alert, animated: true)
+        }))
+        present(sheet, animated: true)
+    }
 }
 
 // MARK: - SetupUI
