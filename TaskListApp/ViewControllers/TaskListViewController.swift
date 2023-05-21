@@ -86,13 +86,13 @@ extension TaskListViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let selectedTask = taskList[indexPath.row]
-        let sheet = UIAlertController(
+        let editMenu = UIAlertController(
             title: "Edit",
             message: nil,
             preferredStyle: .actionSheet
         )
-        sheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        sheet.addAction(UIAlertAction(title: "Edit", style: .default, handler: { _ in
+        editMenu.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        editMenu.addAction(UIAlertAction(title: "Edit", style: .default, handler: { _ in
             
             let alert = UIAlertController(
                 title: "Edit Task",
@@ -113,7 +113,7 @@ extension TaskListViewController {
             }))
             self.present(alert, animated: true)
         }))
-        present(sheet, animated: true)
+        present(editMenu, animated: true)
     }
 }
 
